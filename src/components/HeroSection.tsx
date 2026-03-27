@@ -1,9 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 const HeroSection = () => {
   const heroRef = useRef<HTMLDivElement>(null);
-  const [bookVisible, setBookVisible] = useState(false);
-  const [splashParticles, setSplashParticles] = useState<{ id: number; x: number; y: number; angle: number; delay: number }[]>([]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -14,27 +12,6 @@ const HeroSection = () => {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const handleMouseEnter = () => {
-    const particles = [];
-    for (let i = 0; i < 12; i++) {
-      const angle = (i / 12) * Math.PI * 2;
-      particles.push({
-        id: i,
-        x: Math.cos(angle) * 80,
-        y: Math.sin(angle) * 80,
-        angle: angle,
-        delay: i * 30,
-      });
-    }
-    setSplashParticles(particles);
-    setBookVisible(true);
-  };
-
-  const handleMouseLeave = () => {
-    setSplashParticles([]);
-    setBookVisible(false);
-  };
 
   return (
     <section className="relative h-screen w-full overflow-hidden">
@@ -51,73 +28,6 @@ const HeroSection = () => {
 
       {/* Cinematic Overlay */}
       <div className="cinematic-overlay absolute inset-0 z-10" />
-
-      {/* Book reveal on hover - positioned over the book area in the image */}
-      <div
-        className="absolute z-20 left-1/2 top-[55%] -translate-x-1/2 w-32 h-44"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        {/* Splash particles */}
-        {splashParticles.map((particle) => (
-          <div
-            key={particle.id}
-            className="absolute left-1/2 top-1/2 w-2 h-2 rounded-full"
-            style={{
-              background: "linear-gradient(135deg, #8B4513, #D2691E)",
-              transform: `translate(-50%, -50%) translate(${particle.x}px, ${particle.y}px) scale(0)`,
-              animation: bookVisible 
-                ? `splashOut 0.6s ease-out ${particle.delay}ms forwards` 
-                : `splashIn 0.3s ease-in forwards`,
-              boxShadow: "0 0 6px rgba(139, 69, 19, 0.6)",
-            }}
-          />
-        ))}
-        
-        {/* Central glow ring */}
-        <div 
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-0 h-0 rounded-full"
-          style={{
-            background: "radial-gradient(circle, rgba(210, 105, 30, 0.4) 0%, transparent 70%)",
-            animation: bookVisible ? "glowPulse 1.5s ease-in-out infinite" : "none",
-          }}
-        />
-
-        {/* Book content */}
-        <div
-          className="w-full h-full flex items-center justify-center"
-          style={{
-            opacity: bookVisible ? 1 : 0,
-            transform: bookVisible ? "scale(1)" : "scale(0.8)",
-            transition: "all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
-            pointerEvents: bookVisible ? "auto" : "none",
-          }}
-        >
-          <div 
-            className="w-full h-full rounded-lg flex items-center justify-center"
-            style={{
-              background: "linear-gradient(135deg, hsl(150 8% 14% / 0.9), hsl(150 16% 5% / 0.95))",
-              backdropFilter: "blur(8px)",
-              boxShadow: bookVisible 
-                ? "0 0 40px rgba(210, 105, 30, 0.3), inset 0 0 20px rgba(210, 105, 30, 0.1)" 
-                : "none",
-              border: "1px solid rgba(210, 105, 30, 0.3)",
-            }}
-          >
-            <div className="text-center px-2">
-              <p className="font-display text-foreground text-sm tracking-widest uppercase opacity-70">
-                New Book
-              </p>
-              <p className="font-display text-foreground text-lg font-semibold mt-1">
-                قهوة
-              </p>
-              <p className="font-body text-muted-foreground text-xs mt-2 tracking-wider uppercase">
-                Available Now
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Artist Name - Top Left */}
       <div className="absolute top-8 left-8 md:left-12 z-20 animate-fade-in-up">
